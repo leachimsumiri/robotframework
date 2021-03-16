@@ -1,0 +1,21 @@
+Xesar Version: 3.0.322
+
+NEW:
+	Folder:
+		M-Wartungskomponente/
+	Tests:
+		XS3-1886
+
+Changes:
+	dl_binaries.sh - new version of zephyr-execution-results
+	[Telegram Notify] - added result.stdout
+	[Tablet Version Abfragen] - added result and rc parameter
+	[Tablet Wartungsaufgabe Durchführen Ohne Synchronisieren] - added pin parameter
+	[Software Pin Setzen] - added pincode parameter
+	[Identmedium Doppelt Zu Komponente] - added idm parameter
+
+Fixed:
+	XS3-3343 - "Installation" zone instead of "Bereich1"
+	[Software Zeitserie Mit Mehreren Zeitfenstern Zu Zeitprofil Hinzufügen] - fixed for office mode time profile by scrolling not only down but always elements into view
+	[Software Warte Auf Online Wartungsaufgaben] - fixed index in for loop break condition
+	[Remove Individual Authorisation To Medium]

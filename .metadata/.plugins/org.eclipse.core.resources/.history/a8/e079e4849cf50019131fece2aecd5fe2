@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<projectConfiguration>
+    <configVersion>2</configVersion>
+    <relativeTo>WORKSPACE</relativeTo>
+    <variable name="${ROOT_DIR}" value="/home/michaelirimus/Projects/Robotframework/xesar3-life-cycle/"/>
+    <referencedLibrary type="PYTHON" name="AppiumLibrary" path="/home/plehner/.local/lib/python2.7/site-packages" dynamic="false"/>
+    <referencedLibrary type="PYTHON" name="DatabaseLibrary" path="/home/plehner/.local/lib/python2.7/site-packages" dynamic="false"/>
+    <referencedLibrary type="PYTHON" name="RobotTableLayout" path="xesar3-life-cycle/Resources" dynamic="false"/>
+    <referencedLibrary type="PYTHON" name="Selenium2Library" path="/home/plehner/.local/lib/python2.7/site-packages" dynamic="false"/>
+    <referencedLibrary type="PYTHON" name="SSHLibrary" path="/home/plehner/.local/lib/python2.7/site-packages" dynamic="false"/>
+    <referencedLibrary type="PYTHON" name="StringHelper" path="xesar3-life-cycle/Resources" dynamic="false"/>
+    <referencedLibrary type="PYTHON" name="SystemEvents" path="xesar3-life-cycle/Resources" dynamic="false"/>
+    <referencedLibrary type="PYTHON" name="JSONLibrary" path="/home/plehner/.local/lib/python2.7/site-packages/JSONLibrary" dynamic="false"/>
+    <referencedLibrary type="PYTHON" name="PyTridentor" path="/home/plehner/.local/lib/python2.7/site-packages" dynamic="false"/>
+    <referencedLibrary type="PYTHON" name="WebSocketClient" path="/home/plehner/.local/lib/python2.7/site-packages" dynamic="false"/>
+    <referencedLibrary type="PYTHON" name="SeleniumLibrary" path="/home/plehner/.local/lib/python2.7/site-packages" dynamic="false"/>
+    <referencedLibrary type="PYTHON" name="URLibrary" path="xesar3-life-cycle/Resources/URLibrary.py" dynamic="false"/>
+    <referencedLibrary type="PYTHON" name="XvfbRobot" path="/home/plehner/.local/lib/python2.7/site-packages/XvfbRobot/__init__.py" dynamic="false"/>
+    <referencedLibrary type="PYTHON" name="MQTTLibrary" path="/home/plehner/.local/lib/python2.7/site-packages/MQTTLibrary/__init__.py" dynamic="false"/>
+    <pythonpath/>
+    <classpath/>
+    <variableFiles path="xesar3-life-cycle/Resources/GlobalVariable.robot"/>
+    <excludedForValidation>
+        <excludedPath path="binaries"/>
+        <excludedPath path="dl_binaries.sh"/>
+        <excludedPath path="dl_binaries.cfg"/>
+        <excludedPath path="CreateDocumentation.bat"/>
+        <excludedPath path="StartRobot.bat"/>
+        <excludedPath path="TestSuites/Log"/>
+        <excludedPath path="doc-generator.sh"/>
+        <excludedPath path="periphery-manager.sh"/>
+        <excludedPath path="report.html"/>
+        <excludedPath path="commit-changes.log"/>
+        <excludedPath path="AKtest.bat"/>
+        <excludedPath path="airkey"/>
+        <excludedPath path="appium.log"/>
+        <excludedPath path="bamboo_entry.sh"/>
+        <excludedPath path="runSandbox.sh"/>
+        <excludedPath path="geckodriver-1.log"/>
+        <excludedPath path="log.html"/>
+        <excludedPath path="output.xml"/>
+    </excludedForValidation>
+    <isValidatedFileSizeCheckingEnabled>true</isValidatedFileSizeCheckingEnabled>
+    <validatedFileMaxSize>1024</validatedFileMaxSize>
+</projectConfiguration>

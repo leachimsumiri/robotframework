@@ -1,0 +1,12 @@
+*** Settings ***
+Resource    ../../../Resources/GlobalVariable.robot
+Suite Setup    Setup Vorbedingung    cylinder-01
+Suite Teardown    Teardown Suite
+*** Test Cases ***
+# EVVA-Komponente und Einbauort hinzufügen (Offline)
+XS3-1121
+    [Tags]    ready    lifecycle    blocker    drücker    beschlag    zylinder    wandleser
+    # Duration = 05:30
+    
+    # PRECONDITION = Setup Vorbedingung
+    Evva Komponente Hinzufügen    ${comp1}

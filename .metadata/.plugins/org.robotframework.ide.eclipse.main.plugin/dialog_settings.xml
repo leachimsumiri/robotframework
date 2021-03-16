@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.robotframework.ide.tableditor.activePage./xesar3-life-cycle/TestSuites/Tests/Komponenten_B-Lifecycle/XS3-1121.robot">
+		<item key="activePage" value=""/>
+	</section>
+	<section name="org.robotframework.ide.tableditor.activePage./xesar3-life-cycle/Resources/GlobalVariable.robot">
+		<item key="activePage" value=""/>
+	</section>
+	<section name="org.robotframework.ide.project.editor.activePage.xesar3-life-cycle">
+		<item key="activePage" value="LibrariesProjectConfigurationEditorPart"/>
+	</section>
+	<section name="org.robotframework.ide.tableditor.activePage./xesar3-life-cycle/Resources/Browserstack.robot">
+		<item key="activePage" value=""/>
+	</section>
+	<section name="org.robotframework.ide.tableditor.activePage./xesar3-life-cycle/TestSuites/Tests/Komponenten_B-Firmware/XS3-1227.robot">
+		<item key="activePage" value=""/>
+	</section>
+	<section name="org.robotframework.ide.tableditor.activePage./xesar3-life-cycle/TestSuites/Tests/Komponenten_B-Firmware/XS3-1228.robot">
+		<item key="activePage" value=""/>
+	</section>
+	<section name="org.robotframework.ide.tableditor.activePage./xesar3-life-cycle/Resources/InstallationManager.robot">
+		<item key="activePage" value=""/>
+	</section>
+	<section name="org.robotframework.ide.tableditor.activePage./xesar3-life-cycle/Resources/IpeController.robot">
+		<item key="activePage" value=""/>
+	</section>
+	<section name="org.robotframework.ide.tableditor.activePage./xesar3-life-cycle/Resources/MediaToolCli.robot">
+		<item key="activePage" value=""/>
+	</section>
+	<section name="org.robotframework.ide.tableditor.activePage./xesar3-life-cycle/Resources/Miscellaneous.robot">
+		<item key="activePage" value=""/>
+	</section>
+	<section name="org.robotframework.ide.tableditor.activePage./xesar3-life-cycle/Resources/MotorSensorBox.robot">
+		<item key="activePage" value=""/>
+	</section>
+	<section name="org.robotframework.ide.tableditor.activePage./xesar3-life-cycle/Resources/PeripheryManager.robot">
+		<item key="activePage" value=""/>
+	</section>
+	<section name="org.robotframework.ide.tableditor.activePage./xesar3-life-cycle/Resources/RelaisSwitch.robot">
+		<item key="activePage" value=""/>
+	</section>
+	<section name="org.robotframework.ide.tableditor.activePage./xesar3-life-cycle/Resources/SSH.robot">
+		<item key="activePage" value=""/>
+	</section>
+	<section name="org.robotframework.ide.tableditor.activePage./xesar3-life-cycle/Resources/Tablet.robot">
+		<item key="activePage" value=""/>
+	</section>
+	<section name="org.robotframework.ide.tableditor.activePage./xesar3-life-cycle/Resources/UIAutomation.robot">
+		<item key="activePage" value=""/>
+	</section>
+	<section name="org.robotframework.ide.tableditor.activePage./xesar3-life-cycle/Resources/URConnection.robot">
+		<item key="activePage" value=""/>
+	</section>
+	<section name="org.robotframework.ide.tableditor.activePage./xesar3-life-cycle/TestSuites/Initialization.robot">
+		<item key="activePage" value=""/>
+	</section>
+	<section name="org.robotframework.ide.tableditor.activePage./xesar3-life-cycle/Keywords/CardReader/CardReaderOperations.robot">
+		<item key="activePage" value=""/>
+	</section>
+	<section name="org.robotframework.ide.tableditor.activePage./xesar3-life-cycle/Keywords/Testteam/Setup.robot">
+		<item key="activePage" value=""/>
+	</section>
+	<section name="org.robotframework.ide.tableditor.activePage./xesar3-life-cycle/airkey/POC_2/Airkey_poc_TCs.robot">
+		<item key="activePage" value=""/>
+	</section>
+</section>

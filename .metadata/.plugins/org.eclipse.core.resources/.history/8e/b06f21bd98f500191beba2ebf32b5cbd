@@ -1,0 +1,343 @@
+*** Settings ***
+Documentation     This files contains only global variables, which can be overriden by command line arguments.
+...               E. g. use command line parameter --variable SITE_URL:docker1.evva.com:8080 to set the backend host.
+Variables    ${CURDIR}/../binaries/firmware.py    # File generated on robotslave by dl-binaries.sh and copied to robotmaster
+Variables    ${CURDIR}/../binaries/apk.py    # File generated on robotslave by dl-binaries.sh and copied to robotmaster
+Variables    ${CURDIR}/../binaries/media_tool_cli.py    # File generated on robotslave by dl-binaries.sh and copied to robotmaster
+Variables    browserstack_auth.py    #BROWSERSTACK_USER and BROWSERSTACK_KEY
+Variables    browserstack_config.py
+
+Resource    Miscellaneous.robot
+Resource    UIAutomation.robot
+Resource    RelaisSwitch.robot
+Resource    MediaToolCli.robot
+Resource    Browserstack.robot
+Resource    IpeController.robot
+Resource    MotorSensorBox.robot
+Resource    PeripheryManager.robot
+Resource    URConnection.robot
+Resource    InstallationManager.robot
+Resource    Tablet.robot
+Resource    SSH.robot
+
+Resource    ${ROOT_DIR}/Keywords/CardReader/CardReaderOperations.robot
+
+Resource    ${ROOT_DIR}/Keywords/Component/ComponentOperations.robot
+
+Resource    ${ROOT_DIR}/Keywords/Software/SWAuthorizationOperations.robot
+Resource    ${ROOT_DIR}/Keywords/Software/SWMainOperations.robot
+Resource    ${ROOT_DIR}/Keywords/Software/SWMediumAndPersonOperations.robot
+Resource    ${ROOT_DIR}/Keywords/Software/SWComponentOperations.robot
+Resource    ${ROOT_DIR}/Keywords/Software/SWCodingStationOperations.robot
+Resource    ${ROOT_DIR}/Keywords/Software/SWTimeProfileOperations.robot
+Resource    ${ROOT_DIR}/Keywords/Software/SWProgrammingDevice.robot
+Resource    ${ROOT_DIR}/Keywords/Software/SWSettingOperations.robot
+
+Resource    ${ROOT_DIR}/Keywords/Tablet/TabletMainOperations.robot
+Resource    ${ROOT_DIR}/Keywords/Tablet/TabletDoorOperations.robot
+
+Resource    ${ROOT_DIR}/Keywords/Testteam/Identmedium.robot
+Resource    ${ROOT_DIR}/Keywords/Testteam/Setup.robot
+Resource    ${ROOT_DIR}/Keywords/Testteam/EvvaKomponente.robot
+Resource    ${ROOT_DIR}/Keywords/Testteam/Wartungskomponente.robot
+Resource    ${ROOT_DIR}/Keywords/Testteam/Software.robot
+
+Resource    ${ROOT_DIR}/Keywords/Tridentor/Tridentor.robot
+
+Resource    ${ROOT_DIR}/TestSuites/Initialization.robot
+
+Library    WebSocketClient
+Library    SeleniumLibrary
+Library    Collections
+Library    Dialogs
+Library    OperatingSystem
+Library    Process
+Library    DateTime
+Library    String
+Library    SSHLibrary
+Library    DatabaseLibrary
+Library    AppiumLibrary
+
+Library    URLibrary.py
+Library    SystemEvents.py
+Library    StringHelper.py
+Library    RobotTableLayout.py
+
+
+*** Variables ***
+${ROOT_DIR}    ../
+${MOUNT_DIR}    /home/plehner/mnt    #config in /etc/fstab
+${PATH_HEX2IMG}    ${MOUNT_DIR}/FW_Images/HudsonBuilds/hex2image/hex2image.exe.linux
+${SITE_URL}       https://docker1.evva.com:8080
+${INSTALLATION_NAME}    TestAuto
+${LOGFOLDER_NAME}    False    #var set via cli --variable LOGFOLDER_NAME:2019-03-04_14.52.14
+${LOGFOLDER_DIR}    ${ROOT_DIR}/TestSuites/Log/
+${WEBSOCKET}    ws://192.168.3.118:8080
+${WEBSOCKET_ON}    True
+${CI_COMPONENT}    ${EMPTY}
+#
+${PLATFORM}    linux2
+# DIRs
+${CWD_XS3_IM_CMD}    ${ROOT_DIR}/binaries/xs3-im-cmd
+#
+${TABLET_APP_PACKAGE}    com.evva.aess.android.programmingdevice
+#
+${TABLET_USER_ADMIN}    admin
+${TABLET_USER_ADMIN_PW}    xesar3
+${TABLET_NAME}    Systemtest
+${TABLET_IP}      192.168.3.203    # Tablet IP for Synching Maintenance Tasks.
+${TABLET_PORT}    5555    # Tablet Port for Synching Maintenance Tasks.
+${TABLET_PIN}     1234    # Pin to be used.
+#
+${ROBOT_SLAVE_HOST}    robotslave.evva.com
+${ROBOT_SLAVE_USERNAME}    robotslave
+${ROBOT_SLAVE_PASSWORD}    08robotslave15
+${ROBOT_SLAVE_ALIAS}    ROBOT_SLAVE
+${ROBOT_SLAVE_FW_ROOT_PATH}    /home/robotslave/FW
+${ROBOT_SAVE_LOG_PATH}    /home/robotslave/temp
+#
+# Initialized Status
+${ROBOT_INITIALIZED}    False
+${SSH_ROBOTSLAVE_INITIALIZED}    False
+${TABLET_INITIALIZED}    False
+${LOGGED_IN}    False
+${BROWSERSTACK_INITIALIZED}    False
+${PERIPHERYMANAGER_INITIALIZED}    False
+${BROWSER_OPEN}    False
+#
+#Pi that switches the tablet between charging and usb2go
+${RPI_GPIO_IP}    192.168.3.226
+${RPI_GPIO_ALIAS}    raspberrypi-usb2go-switch
+${RPI_GPIO_USERNAME}    pi
+${RPI_GPIO_PASSWORD}    Aess123
+#
+${XESAR_PROPERTIES_FILE}    xesar-cs.properties
+${DESTINATION_XESAR_PROPERTIES_FILE}    ${CURDIR}/
+# Set SKIP_ROBOT to true if the robot is temporaily not available.
+${SKIP_ROBOT}     False
+#
+# Coding station name for the test automation
+${CODING_STATION_DEFAULT_NAME}    RobotCs
+#
+# Retry count for checking if overlay window opens.
+${RETRY_OVERLAY}    5
+${test_component_type}    ${EMPTY}
+${test_component_row}    ${EMPTY}
+${test_component_position}    ${EMPTY}
+${test_component_name}    ${EMPTY}
+${TIMESTAMP}    ${EMPTY}
+${down_first}    ${EMPTY}
+${MAINTENANCE_TASKS_COUNT}    0
+${SSH_SAVED_CONNECTION_ID}    ${EMPTY}
+#
+# Silent errors for Media Definitions
+${idm1}
+${idm2}
+${idm3}
+# Media information
+${MEDIUM_AUTOSYSTESTER_IDENTIFIER}    IdentmediumFT20K05    # Karte Autosystester Kennzeichen des Identmediums.
+${MEDIUM_AUTOSYSTESTER_AUTHORIZATION_PROFILE}    Angestellte    # Berechtigungsprofil
+#
+# in seconds
+${DEFAULT_SELENIUM_WAIT_TIMEOUT}    5s
+#${SELENIUM_SPEED}    1
+${DEFAULT_APPIUM_WAIT_TIMEOUT}    5
+${BROWSERSTACK_REMOTE_URL} =  http://${BROWSERSTACK_USER}:${BROWSERSTACK_KEY}@hub.browserstack.com:80/wd/hub
+
+# IPE
+${DEVICE_PIC_STANDARD}    24FJ128GA306
+${DEVICE_PIC_MOTORPRINT}    24FJ64GA002
+
+${IPE_LOCATION}    java -jar /opt/microchip/mplabx/v5.05/mplab_platform/mplab_ipe/ipecmd.jar
+@{IPE_COMMAND_POSTFIX}    return_stdout=True    return_stderr=True    return_rc=True
+${FIRMWARE_ROOT}    Firmware
+${FIRMWARE_BUILD_DEV_PATH}    /home/plehner/mnt/t/Entwicklung/FW_Images/HudsonBuilds/Git/develop    #mount on slave
+# Configuration for the layout is in UIAutomation.Set Robot Layout
+
+# Following definitions are used for defining the robot table layout and used in UI Automation.
+${COMPONENT_CARD_READER}    CardReader    # This component has no firmware to update.
+${COMPONENT_HANDLE}    Handle    # Drücker
+${COMPONENT_ESCUTCHEON}    Escutcheon    # Beschlag
+${COMPONENT_CYLINDER}    Cylinder    # Zylinder
+${COMPONENT_WALL_READER}    WallReader
+${COMPONENT_ONLINE_WALL_READER}    OnlineWallReader
+${COMPONENT_WALL_READER2X}    WallReader2x    # This component needs extra care because it has 2 wall readers included.
+#
+# Number of contact motor box - trident connector number
+${COMPONENT_HANDLE_MB}    7    # Drücker
+${COMPONENT_ESCUTCHEON_MB}    6    # Beschlag
+${COMPONENT_CYLINDER_MB}    8    # Zylinder
+${COMPONENT_WALL_READER2X_MB}    1    # This component needs extra care because it has 2 wall readers included.
+#
+# Following definitions are for the ipe controller for flashing via pickit3.
+${COMPONENT_TYPE_EB1012}    eb1012
+${COMPONENT_TYPE_EB1022}    eb1022
+${COMPONENT_TYPE_EDR}    edr
+${COMPONENT_TYPE_ECU}    ecu
+${COMPONENT_TYPE_EOU}    eou
+${COMPONENT_TYPE_EWL}    ewl
+${COMPONENT_TYPE_EZ2010}    ez2010
+${COMPONENT_TYPE_EZ2020}    ez2020
+#
+#XPATHS in software support tile for each component
+${SUPPORT_FIRMWARE_XPATH}    xpath=//div[@data-selenium="panel-body-support-about"]/div/div[3]/p
+${SUPPORT_FIRMWARE_HANDLE_XPATH}    xpath=//div[@data-selenium="panel-body-support-about"]/div/div[3]/li[1]
+${SUPPORT_FIRMWARE_ESCUTCHEON_XPATH}    xpath=//div[@data-selenium="panel-body-support-about"]/div/div[3]/li[2]
+${SUPPORT_FIRMWARE_CYLINDER_XPATH}    xpath=//div[@data-selenium="panel-body-support-about"]/div/div[3]/li[3]
+${SUPPORT_FIRMWARE_WALLREADER_XPATH}    xpath=//div[@data-selenium="panel-body-support-about"]/div/div[3]/li[4]
+${SUPPORT_FIRMWARE_CU2WALLREADER_XPATH}    xpath=//div[@data-selenium="panel-body-support-about"]/div/div[3]/li[5]
+${SUPPORT_FIRMWARE_ONLINEWALLREADER_XPATH}    xpath=//div[@data-selenium="panel-body-support-about"]/div/div[3]/li[6]
+
+# Component dictionary
+&{escutcheon-01}=    component=${COMPONENT_ESCUTCHEON}    id=1    name=Beschlag    description=placeholder
+...    type=    disengage_short=9    disengage_long=11    dictname=escutcheon-01
+...    time_profile=
+...    protocol=    manual_office_mode=
+...    shop_mode=	open_door=
+...    chip-count=2    
+...    type2=${COMPONENT_TYPE_EB1012}    type1=${COMPONENT_TYPE_EB1022}
+...    firmware2=${FW_FILE_EB1012}    firmware1=${FW_FILE_EB1022}
+...    print2=${DEVICE_PIC_STANDARD}    print1=${DEVICE_PIC_STANDARD}
+...    serial2=BUR134964211    serial1=BUR134964225
+...    flag1=    flag2=
+...    tridentor-nr=6    db-nr=6
+...    power-relais=2
+...    row=A    pos=3
+...    fw_support_xpath=${SUPPORT_FIRMWARE_ESCUTCHEON_XPATH}
+...    shortname=eb
+
+&{cylinder-01}=    component=${COMPONENT_CYLINDER}    id=2    name=Zylinder    description=placeholder
+...    type=    disengage_short=9    disengage_long=11    dictname=cylinder-01
+...    time_profile=
+...    protocol=    manual_office_mode=
+...    shop_mode=	open_door=
+...    chip-count=2
+...    type2=${COMPONENT_TYPE_EZ2010}    type1=${COMPONENT_TYPE_EZ2020}
+...    firmware2=${FW_FILE_EZ2010}    firmware1=${FW_FILE_EZ2020}
+...    print2=${DEVICE_PIC_STANDARD}    print1=${DEVICE_PIC_MOTORPRINT}
+...    serial2=BUR134964204    serial1=BUR134964203
+...    flag1=-W    flag2=-W
+...    tridentor-nr=8    db-nr=8
+...    power-relais=7
+...    row=A    pos=4
+...    fw_support_xpath=${SUPPORT_FIRMWARE_CYLINDER_XPATH}
+...    shortname=ez
+
+&{handle-01}=    component=${COMPONENT_HANDLE}    id=3    name=Drücker    description=placeholder
+...    type=    disengage_short=9    disengage_long=11    dictname=handle-01
+...    time_profile=
+...    protocol=    manual_office_mode=
+...    shop_mode=	open_door=
+...    chip-count=1
+...    type1=${COMPONENT_TYPE_EDR}    type2=
+...    firmware1=${FW_FILE_EDR012}    firmware2=
+...    print1=${DEVICE_PIC_STANDARD}    print2=
+...    serial1=BUR134964224    serial2=
+...    flag1=    flag2=
+...    tridentor-nr=7    db-nr=7
+...    power-relais=5
+...    row=A    pos=5
+...    fw_support_xpath=${SUPPORT_FIRMWARE_HANDLE_XPATH}
+...    shortname=edr
+
+&{wallreader-01}=    component=${COMPONENT_WALL_READER}    id=7    name=Wandleser    description=placeholder
+...    type=    disengage_short=9    disengage_long=11    dictname=wallreader-01
+...    time_profile=
+...    protocol=    manual_office_mode=
+...    shop_mode=	open_door=
+...    chip-count=2
+...    type2=${COMPONENT_TYPE_ECU}    type1=${COMPONENT_TYPE_EWL}
+...    firmware2=${FW_FILE_ECU010}    firmware1=${FW_FILE_EWL011}
+...    print2=${DEVICE_PIC_STANDARD}    print1=${DEVICE_PIC_STANDARD}
+...    serial2=BUR134964216    serial1=BUR134964218
+...    flag1=    flag2=
+...    tridentor-nr=5    db-nr=10
+...    power-relais=3
+...    row=B    pos=4
+...    fw_support_xpath=${SUPPORT_FIRMWARE_WALLREADER_XPATH}
+...    shortname=ewl
+
+&{wallreader2x-01}=    component=${COMPONENT_WALL_READER2X}    id=4    name=Wandleser1    description=placeholder
+...    type=    disengage_short=9    disengage_long=11    dictname=wallreader2x-01
+...    time_profile=
+...    protocol=    manual_office_mode=
+...    shop_mode=	open_door=
+...    chip-count=2
+...    type2=${COMPONENT_TYPE_ECU}    type1=${COMPONENT_TYPE_EWL}
+...    firmware2=${FW_FILE_ECU010}    firmware1=${FW_FILE_EWL011}
+...    print2=${DEVICE_PIC_STANDARD}    print1=${DEVICE_PIC_STANDARD}
+...    serial2=BUR134964223    serial1=BUR134964215
+...    flag1=    flag2=
+...    tridentor-nr=1    db-nr=11
+...    power-relais=1
+...    wl2-power-relais=4
+...    row=B    pos=1
+...    fw_support_xpath=${SUPPORT_FIRMWARE_WALLREADER_XPATH}
+...    shortname=ewl
+
+&{wallreader2x-02}=    component=${COMPONENT_WALL_READER2X}    id=5    name=Wandleser2    description=placeholder
+...    type=    disengage_short=9    disengage_long=11    dictname=wallreader2x-02
+...    time_profile=
+...    protocol=    manual_office_mode=
+...    shop_mode=	open_door=
+...    chip-count=2
+...    type2=${COMPONENT_TYPE_ECU}    type1=${COMPONENT_TYPE_EWL}
+...    firmware2=${FW_FILE_ECU010}    firmware1=${FW_FILE_EWL011}
+...    print2=${DEVICE_PIC_STANDARD}    print1=${DEVICE_PIC_STANDARD}
+...    serial2=BUR134964223    serial1=BUR134964214
+...    flag1=    flag2=
+...    tridentor-nr=3    db-nr=11
+...    power-relais=1
+...    wl2-power-relais=4
+...    row=B    pos=2
+...    fw_support_xpath=${SUPPORT_FIRMWARE_WALLREADER_XPATH}
+...    shortname=ewl
+
+&{onlinewallreader-01}=    component=${COMPONENT_ONLINE_WALL_READER}    id=6    name=Online Wandleser    description=placeholder
+...    type=    disengage_short=9    disengage_long=11    dictname=onlinewallreader-01
+...    time_profile=
+...    protocol=    manual_office_mode=
+...    shop_mode=	open_door=
+...    chip-count=2
+...    type2=${COMPONENT_TYPE_EOU}    type1=${COMPONENT_TYPE_EWL}
+...    firmware2=${FW_FILE_EOU010}    firmware1=${FW_FILE_EWL011}
+...    print2=${DEVICE_PIC_STANDARD}    print1=${DEVICE_PIC_STANDARD}
+...    serial2=BUR134964206    serial1=BUR134964212
+...    flag1=    flag2=
+...    tridentor-nr=4   db-nr=12
+...    power-relais=8
+...    row=B    pos=3
+...    fw_support_xpath=${SUPPORT_FIRMWARE_ONLINEWALLREADER_XPATH}
+...    shortname=eou
+
+
+&{components}=    escutcheon-01=&{escutcheon-01}    cylinder-01=&{cylinder-01}    handle-01=&{handle-01}
+...               wallreader-01=&{wallreader-01}    wallreader2x-01=&{wallreader2x-01}    wallreader2x-02=&{wallreader2x-02}
+...               onlinewallreader-01=&{onlinewallreader-01}
+
+# XPATH Filter
+${FILTER_NAME_INPUT_XPATH}    xpath=//form[@data-selenium='filter-form']//div[@data-selenium='select-name-filter']//input
+${FILTER_ID_INPUT_XPATH}    xpath=//form[@data-selenium='filter-form']//div[@data-selenium='select-installationId-filter']//input
+${FILTER_EVENTTYPE_XPATH}    xpath=//div[@data-selenium="select-eventType-filter"]//input
+${FILTER_EVENTVALUE_XPATH}    xpath=//div[@data-selenium="select-eventValue-filter"]//input
+${FILTER_MEDIUM_ID_XPATH}    xpath=//input[@data-selenium="filter-text-label"]
+${FILTER_PERSONS_LASTNAME_XPATH}    xpath=//input[@data-selenium="filter-text-lastName"]
+${FILTER_MEDIUM_ID_ACCESSPROTOCOL_XPATH}    xpath=//div[@data-selenium="select-identificationMediumLabel-filter"]//input
+${FILTER_PERSON_ACCESSPROTOCOL_XPATH}    xpath=//div[@data-selenium="select-person-filter"]//input
+# PANEL-BODY-X
+${PANEL-BODY-ZONES}    xpath=//div[@data-selenium='panel-body-zones']
+${PANEL-BODY-INSTALATION-POINTS}    xpath=//div[@data-selenium='panel-body-installation-points']
+*** Keywords ***
+Set Execution Platform
+    ${value}=    Evaluate    sys.platform    sys
+    Set Global Variable    ${PLATFORM}    ${value}
+    
+Is Windows
+    ${result}=    Run Keyword If    '${PLATFORM}' == 'win32'    Set Variable    True
+    ...    ELSE    Set Variable    False
+    [Return]    ${result}    
+    
+Is Linux
+    ${result}=    Run Keyword If    '${PLATFORM}' == 'linux2'    Set Variable    True
+    ...   ELSE    Set Variable    False
+    [Return]    ${result}

@@ -1,0 +1,172 @@
+*** Settings ***
+Documentation     This library contains basic keywords and setting for the tablet which is controlled by appium.
+...
+...               To get the locators for this library use e.g. Appium Inspector. ADB must be startet before using Inspector.
+...               Appium Inspector: Android set Device Name 192.168.3.???:5555 and Application path
+...
+...
+...               *ATTENTION*: Take care to use the AppiumLibrary-Prefix on command, like in *AppiumLibrary.Clear Text*
+...               Otherwise Selenium2-Driver keywords may be called!
+Resource          GlobalVariable.robot
+
+*** Variables ***
+${APPIUM_SERVER_IP}    192.168.3.118    #127.0.0.1    # Appium shadow nodejs server ip.
+${APPIUM_SERVER_PORT}    4723    # Appium shadow nodejs server port.
+${APPIUM_SERVER_HANDLE}    ${EMPTY}
+# German Texts.
+${DEU_TABLET_SECURITY_VIOLATION}    Sicherheitsverletzung
+# Timeouts and delay times in seconds
+${TABLET_DELAY_AFTER_SECURITY_VIOLATION_READ}    1
+${TABLET_DELAY_TEARDOWN_TABLET}    2
+${TABLET_TIMEOUT_SECURITY_VIOLATION_DISAPPEAR}    5
+${TABLET_TIMEOUT_NODE}    600
+${handle}
+
+*** Keywords ***
+Init Tablet
+    [Arguments]    ${app_file}=${TABLET_APP_FILE}    ${app_package}=${TABLET_APP_PACKAGE}
+    [Documentation]    Start adb service. Start local node server and Appium web driver. Transfer apk via adb and open application via appium.
+    ${appium_status}=    Is Appium Running    3
+    Log    Appium status returned from Test Is Appium Runnning: ${appium_status}
+    Run Keyword If    ${appium_status} == 'True'    Kill Appium
+    #USB2Go Tablet    #Connect ADB Tablet inside
+    Run Keyword If    '${TABLET_INITIALIZED}'=='False'    Connect ADB Tablet
+    ${linux}=    Is Linux
+    ${timeforAppiumlog}=    Get Time For Logfile
+    ${Appiumlogfilepath}=    Set Variable    ${LOGFOLDER}/Appium-${timeforAppiumlog}.log
+    ${handle}=    Run Keyword If    ${linux}    Start Process    appium    --address    ${APPIUM_SERVER_IP}
+    ...    --port    ${APPIUM_SERVER_PORT}    --session-override    --command-timeout    ${TABLET_TIMEOUT_NODE}
+    ...    --log-level    debug:debug    --platform-name    Android    --platform-version    8.1.0
+    ...    --log    ${ROOT_DIR}/appium.log
+    ...    --automation-name    UiAutomator2    --log-no-color    --log-timestamp    stdout=${Appiumlogfilepath}
+    ...    ELSE    Set Variable    ${handle}
+    ${status}    Is Process Running    handle=${handle}
+    Run Keyword If    '${status}'=='False'    Fail    msg=[Init Tablet] Could not start nodejs server. Tablet is not initialized.
+    ${appium_status}=    Is Appium Running
+    Run Keyword If    ${appium_status} == 'False'    Fail    msg=[Init Tablet] Appium ist not running! Could not be started!
+    ...    ELSE    Set Global Variable    ${TABLET_INITIALIZED}    True
+    Set Suite Variable    ${APPIUM_SERVER_HANDLE}    ${handle}
+    ${appium_app_index}=    AppiumLibrary.Open Application    http://${APPIUM_SERVER_IP}:${APPIUM_SERVER_PORT}/wd/hub    
+    ...    platformName=Android    platformVersion=8.1.0    deviceName=${TABLET_IP}:${TABLET_PORT}    app=${app_file}    appPackage=${app_package}
+    ...    appActivity=ProgramingDeviceActivity    newCommandTimeout=600
+    ${SessionID}=    Get Appium SessionId
+    Log   Appium Session created: <${SessionID}>
+    AppiumLibrary.Wait Until Page Contains Element    id=com.android.packageinstaller:id/permission_allow_button
+    AppiumLibrary.Click Element    id=com.android.packageinstaller:id/permission_allow_button
+    #Run Process    adb shell input keyevent 111    
+    AppiumLibrary.Hide Keyboard
+    AppiumLibrary.Wait Until Page Contains Element    id=com.evva.aess.android.programmingdevice:id/buttonSync
+
+Connect ADB Tablet
+    Restart ADB And Connect To Tablet
+    :FOR    ${i}    IN RANGE    60
+    \    ${result}=    Run Process    adb    devices    -l
+    \    Log    ${result.stdout}
+    \    Run Keyword If    '${BROWSERSTACK_INITIALIZED}' == 'True'    SeleniumLibrary.Get Title 
+    \    #${isDeviceHere}=    Should Not Contain    ${result.stdout}    Unauthorized    ignore_case=True    values=True
+    \    ${status}    ${message}=    Run Keyword And Ignore Error    Should Not Contain Any    ${result.stdout}    unauthorized    offline     ignore_case=True    values=True
+    \    ${status2}    ${message2}=    Run Keyword And Ignore Error    Should Contain    ${result.stdout}    ${TABLET_IP}:${TABLET_PORT}    values=True
+    \    Run Keyword If    ${i} == 19    Restart ADB And Connect To Tablet
+    \    Run Keyword If    ${i} == 39    Restart ADB And Connect To Tablet
+    \    Run Keyword If    ${i} == 59    Fail    msg=[Init Tablet] ADB could not establish a connection to android tablet
+    \    Exit For Loop If        '${status}' == 'PASS' and '${status2}' == 'PASS'
+    \    Builtin.Sleep    250ms    # sleep for adb to properly connect and list devices
+    Log Many    stdout: ${result.stdout}    stderr: ${result.stderr}
+    #Comment    If adb is not showing any devices then tablet must be connected via usb first
+    #Comment    then type in in cmd: adb tcpip ${TABLET_PORT}
+    #Comment    if connection should be again via usb use: adb usb
+    ${found_devices}    Set Variable    ${result.stdout}
+    Should Contain    ${found_devices}    ${TABLET_IP}:${TABLET_PORT}    msg=Tablet ${TABLET_IP}:${TABLET_PORT} not found!    values=True
+    Should Not Contain    ${found_devices}    offline    msg=Tablet ${TABLET_IP}:${TABLET_PORT} not found!    values=True
+    Should Not Contain    ${found_devices}    unauthorized    msg=Tablet ${TABLET_IP}:${TABLET_PORT} not authorized on the machine where the Testcase is running!    values=True
+
+Teardown Tablet
+    [Documentation]    Logout Tablet and Appium closes tablet application. Close appium and local node server. Stop adb service.
+    AppiumLibrary.Register Keyword To Run On Failure    Nothing
+    Run Keyword And Ignore Error    AppiumLibrary.Close All Applications    #To prevent Fail on Close All Applications, strangely the Close All Applications tries to make a screenshot and that fails
+    Kill Appium
+    Log    Kill adb server.
+    Run Process    adb    kill-server
+    Charge Tablet
+
+Charge Tablet
+    [Documentation]    Change the connection mode to charge, it normaly takes about 16s. This keyword does not wait for it to finish
+    Log    Zeitweise Disabled weil otg switch RIP
+    #Run Keyword If    '${TABLET_INITIALIZED}'=='False'    Connect ADB Tablet
+    #Save Current SSH Connection
+    #SSHLibrary.Open Connection    ${RPI_GPIO_IP}    ${RPI_GPIO_ALIAS}
+    #SSHLibrary.Login    ${RPI_GPIO_USERNAME}    ${RPI_GPIO_PASSWORD}
+    #${stdout}    ${stderr}    ${rc}=    SSHLibrary.Execute Command    sudo node /home/pi/rpi-gpio/write-gpio.js 21 0    return_stderr=True    return_rc=True
+    #Check And Print Result    ${stdout}    ${stderr}    ${rc}    [Charge Tablet] Failed to change to charge mode.
+    #Should Contain    ${stdout}     OK
+    #Close Connection
+    #Switch To Saved SSH Connection
+    #Check Tablet Power Mode    On
+
+USB2Go Tablet
+    [Documentation]    Change the connection mode to usb2go to allow client devices via USB
+    Log    USB2Go Zeitweise Disabled weil otg switch RIP
+    #Run Keyword If    '${TABLET_INITIALIZED}'=='False'    Connect ADB Tablet
+    #Save Current SSH Connection
+    #SSHLibrary.Open Connection    ${RPI_GPIO_IP}    ${RPI_GPIO_ALIAS}
+    #SSHLibrary.Login    ${RPI_GPIO_USERNAME}    ${RPI_GPIO_PASSWORD}
+    #${stdout}    ${stderr}    ${rc}=    SSHLibrary.Execute Command    sudo node /home/pi/rpi-gpio/write-gpio.js 21 1    return_stderr=True    return_rc=True
+    #Check And Print Result    ${stdout}    ${stderr}    ${rc}    [USB2Go Tablet] Failed to change to usb2go mode.
+    #Should Contain    ${stdout}     OK
+    #Close Connection
+    ##TODO    if var exists ${ROBOT_SLAVE_ALIAS}    then switch connection to ${ROBOT_SLAVE_ALIAS}
+    #Switch To Saved SSH Connection
+    ##BuiltIn.Sleep    11s    #time that the hardware needs to switch to OTG
+    ##sleep ersetzt durch connect adb tablet und check tablet powermode, 12.09.2019
+    #Check Tablet Power Mode    Off
+
+Check Tablet Power Mode
+    [Documentation]    Check if Tablet is charging or connected to USB (Dreizack). 
+    ...    ${power} can be "On" or "Off". On = check if tablet charges. Off = Check if Tablet is on USB2GO
+    [Arguments]    ${power}
+    Should Contain Any    ${power}    On    Off    msg=[Check Tablet Power Mode] parameter must be either "On" or "Off"
+    Run Keyword If    '${power}' == 'On'    Set Suite Variable    ${power}    1
+    Run Keyword If    '${power}' == 'Off'    Set Suite Variable    ${power}    0
+    ${power}=    Convert To Integer    ${power}    
+    :FOR    ${i}    IN RANGE    0    20
+    \    ${result}=    Process.Run Process    adb shell dumpsys battery | grep "AC powered: false" -c    shell=True
+    \    LOG    Index: ${i} and result: ${result}, rc: ${result.rc}
+    \    Exit For Loop If    ${result.rc}==${power}
+    \    Run Keyword If    ${i} == 19    Fail    msg=[Check Tablet Power Mode] Switch to ${power} didn't work
+    \    Builtin.Sleep    1s
+
+Is Appium Running
+    [Documentation]    Check if appium is running
+    [Arguments]    ${number_of_checks}=20
+    ${output}=    Evaluate    'True'
+    ${range_start}=    Evaluate    1
+    ${range_end}=    Evaluate    ${number_of_checks}
+    :FOR    ${INDEX}    IN RANGE    ${range_start}    ${range_end}
+    \    LOG    Index: ${INDEX} and output: ${output}
+    \    ${result}=    Process.Run Process    lsof -i :${APPIUM_SERVER_PORT}    shell=True    # checks if port is used, so appium ist running
+    \    BuiltIn.Sleep    1s
+    \    Exit For Loop If    '${result.rc}' == '0'
+    \    Log    Index: ${INDEX} -- ${range_end-1} :range end
+    \    ${output}=    Set Variable If    ${INDEX} == ${range_end-1}    'False'    ${INDEX} != ${range_end-1}    'True'
+    Run Keyword If    ${output} == 'False'    Log    msg=Appium is not running!
+    [Return]    ${output}
+
+Kill Appium
+    [Documentation]    Searches for the appium process and kills it with SIGTERM
+    ${process_id}=    Process.Run Process    ps -Af | grep "[a]ppium" | awk '{print $2}'    shell=True
+    Log    stdout: ${process_id.stdout}
+    Process.Run Process    kill -15 ${process_id.stdout}    shell=True
+    Log    [Kill Appium Keyword] Appium killed
+    
+Restart ADB And Connect To Tablet
+    [Documentation]    adb kill-server and adb connect
+    :FOR    ${i}    IN RANGE    10
+    \    Run Keyword If    '${BROWSERSTACK_INITIALIZED}' == 'True'    SeleniumLibrary.Get Title 
+    \    Log    Restart ADB and connect to tablet
+    \    ${result}=    Run Process    adb    shell=True    #kill-server    shell=True
+    \    BuiltIn.Sleep    3s
+    \    ${result}=    Run Process    adb    shell=True    #connect    ${TABLET_IP}:${TABLET_PORT}    shell=True
+    \    Run Keyword If    ${i} == 9    Fail    msg=[Init Tablet] ADB connect failed
+    \    Exit For Loop If        ${result.rc} == 0
+    \    BuiltIn.Sleep    3s
+
